@@ -5,7 +5,6 @@
 
   WNL.DEFAULTS = {
     enabled: true,
-    trigger: 'auto', // 'auto' — при любом выделении, 'alt' — только с зажатым Alt
     regions: 'eu,us', // порядок регионов для поиска
     defaultRealm: '', // сервер по умолчанию для ников без сервера
     searchNameOnly: true, // искать ники без сервера через поиск Raider.IO

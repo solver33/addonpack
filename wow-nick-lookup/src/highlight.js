@@ -345,7 +345,6 @@
 
   function open(it) {
     if (!it.range.startContainer.isConnected) return;
-    if (page.origin === 'select') return; // не перебиваем карточку выделения
     const r = it.range.getBoundingClientRect();
     page.show([Object.assign({}, it.cand)], { right: r.right + 10, left: r.left - 10, top: r.top - 8 }, 'hover', remember);
   }

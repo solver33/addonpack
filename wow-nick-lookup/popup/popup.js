@@ -5,7 +5,7 @@
   let settings = await WNL.loadSettings();
 
   // настройки
-  const fields = ['enabled', 'trigger', 'regions', 'defaultRealm', 'searchNameOnly', 'highlight', 'colorize'];
+  const fields = ['enabled', 'regions', 'defaultRealm', 'searchNameOnly', 'highlight', 'colorize'];
   fields.forEach((k) => {
     const el = $(k);
     if (el.type === 'checkbox') el.checked = !!settings[k];

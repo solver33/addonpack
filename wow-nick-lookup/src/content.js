@@ -1,4 +1,5 @@
-// Карточка персонажей на странице: показывается при выделении текста или при наведении на подсвеченный ник.
+// Карточка персонажа на странице: показывается при наведении на подсвеченный ник (см. highlight.js).
+// Выделение текста мышью расширение не отслеживает.
 (function () {
   'use strict';
   const WNL = globalThis.WNL;
@@ -27,33 +28,12 @@
 
   let host = null;
   let shadow = null;
-  let origin = null; // 'select' | 'hover'
-  let lastText = '';
+  let origin = null; // кто открыл карточку: 'hover'
   let requestId = 0;
   let anchor = { right: 0, left: 0, top: 0 };
 
   document.addEventListener('mousedown', (e) => { if (host && !page.isInCard(e)) close(); }, true);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); }, true);
-  document.addEventListener('mouseup', (e) => {
-    const s = page.settings;
-    if (!s.enabled || e.button !== 0 || page.isInCard(e)) return;
-    if (s.trigger === 'alt' && !e.altKey) return;
-    const x = e.clientX;
-    const y = e.clientY;
-    // даём браузеру дообновить выделение (двойной/тройной клик)
-    setTimeout(() => handleSelection(x, y), 10);
-  }, true);
-
-  function handleSelection(x, y) {
-    const sel = window.getSelection();
-    const text = sel ? sel.toString() : '';
-    if (!text.trim() || text.length > 4000) return;
-    if (host && origin === 'select' && text === lastText) return;
-    const candidates = WNL.parse(text);
-    if (!candidates.length) return;
-    show(candidates, { right: x + 16, left: x - 16, top: y - 14 }, 'select');
-    lastText = text;
-  }
 
   // короткое уведомление у курсора («Скопировано: /inv …»)
   let toastHost = null;
@@ -90,7 +70,6 @@
 
   function close() {
     requestId++;
-    lastText = '';
     origin = null;
     if (host) host.remove();
     host = shadow = null;
