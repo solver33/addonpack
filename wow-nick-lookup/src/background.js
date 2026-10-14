@@ -3,14 +3,13 @@
 
 const PROFILE_API = 'https://raider.io/api/v1/characters/profile';
 const SEARCH_API = 'https://raider.io/api/search';
-const FIELDS = 'gear,guild,mythic_plus_scores_by_season:current';
+const FIELDS = 'gear,guild';
 const TTL = 10 * 60 * 1000;
 const MAX_SEARCH_RESULTS = 5;
 
 const cache = new Map(); // url -> { at, value }
 
 function slim(p) {
-  const score = p.mythic_plus_scores_by_season && p.mythic_plus_scores_by_season[0];
   return {
     name: p.name,
     realm: p.realm,
@@ -21,7 +20,6 @@ function slim(p) {
     role: p.active_spec_role,
     faction: p.faction,
     itemLevel: p.gear ? Math.round(p.gear.item_level_equipped) : null,
-    score: score && score.scores ? Math.round(score.scores.all) : null,
     guild: p.guild ? p.guild.name : null,
     url: p.profile_url,
     thumbnail: p.thumbnail_url,
