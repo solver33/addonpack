@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>WoW Nick Lookup</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <strong>WoW Nick Lookup</strong>
+    <label class="switch" title="Включить/выключить на страницах">
+      <input type="checkbox" id="enabled"> <span>вкл</span>
+    </label>
+  </header>
+
+  <textarea id="text" rows="3" placeholder="Вставь сюда текст (Ctrl+V) — например, из десктопного Discord. Поиск начнётся сам."></textarea>
+  <div id="results"></div>
+
+  <details>
+    <summary>Настройки</summary>
+    <label>Когда искать
+      <select id="trigger">
+        <option value="auto">при любом выделении текста</option>
+        <option value="alt">только если выделять с зажатым Alt</option>
+      </select>
+    </label>
+    <label>Регионы
+      <select id="regions">
+        <option value="eu,us">сначала EU, потом US</option>
+        <option value="us,eu">сначала US, потом EU</option>
+        <option value="eu">только EU</option>
+        <option value="us">только US</option>
+        <option value="kr,tw">KR / TW</option>
+      </select>
+    </label>
+    <label>Сервер по умолчанию (для ников без сервера)
+      <input id="defaultRealm" type="text" placeholder="например, Silvermoon или Гордунни">
+    </label>
+    <label class="check">
+      <input type="checkbox" id="searchNameOnly"> Ник без сервера — искать совпадения на Raider.IO
+    </label>
+  </details>
+
+  <script src="../src/realms.js"></script>
+  <script src="../src/parser.js"></script>
+  <script src="../src/i18n.js"></script>
+  <script src="../src/client.js"></script>
+  <script src="../src/ui.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
