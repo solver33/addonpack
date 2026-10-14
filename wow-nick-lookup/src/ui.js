@@ -4,54 +4,68 @@
   const WNL = (root.WNL = root.WNL || {});
   const T = () => WNL.i18n;
 
+  const FONT = '"gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif';
+
   const CSS = `
     :host { all: initial; }
     .wnl-panel {
-      font: 12.5px/1.3 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      color: #e8e6e3; background: #16181d; border: 1px solid #6b5420; border-radius: 8px;
-      box-shadow: 0 8px 28px rgba(0,0,0,.55); min-width: 200px; max-width: 380px; overflow: hidden;
+      font: 13px/1.3 ${FONT}; color: #dbdee1; background: #232428;
+      border: 1px solid rgba(255,255,255,.06); border-radius: 10px; padding: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.2);
+      min-width: 230px; max-width: 380px; animation: wnl-in .12s ease-out;
     }
-    .wnl-head {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      padding: 2px 4px 2px 8px; background: #1f2229; border-bottom: 1px solid #2c3038;
-      font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #c9a54a;
-    }
-    .wnl-x { all: unset; cursor: pointer; color: #8a8f98; font-size: 16px; line-height: 1; padding: 0 4px; }
-    .wnl-x:hover { color: #fff; }
-    .wnl-list { max-height: 60vh; overflow-y: auto; }
-    .wnl-row { padding: 5px 8px; border-bottom: 1px solid #23262d; }
-    .wnl-row:last-child { border-bottom: 0; }
+    @keyframes wnl-in { from { opacity: 0; transform: translateY(2px); } }
+    .wnl-list { max-height: 60vh; overflow-y: auto; scrollbar-width: thin; }
+    .wnl-row { padding: 6px 8px; border-radius: 7px; }
+    .wnl-row + .wnl-row { margin-top: 2px; }
+    .wnl-row:hover { background: rgba(255,255,255,.04); }
     .wnl-row[hidden] { display: none; }
-    .wnl-char { display: flex; align-items: center; gap: 8px; }
-    .wnl-char + .wnl-char { margin-top: 4px; }
+    .wnl-char { display: flex; align-items: center; gap: 10px; }
+    .wnl-char + .wnl-char { margin-top: 8px; }
     .wnl-ava {
-      position: relative; width: 28px; height: 28px; border-radius: 4px; flex: none; overflow: hidden;
-      background: #2a2d34; cursor: pointer; outline: 1px solid transparent;
+      position: relative; width: 34px; height: 34px; border-radius: 9px; flex: none; overflow: hidden;
+      background: #2b2d31; cursor: pointer; box-shadow: 0 0 0 2px var(--cls, #4e5058);
+      transition: transform .12s ease;
     }
-    .wnl-ava:hover { outline-color: #c9a54a; }
+    .wnl-ava:hover { transform: scale(1.06); }
     .wnl-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .wnl-ava.wnl-ok::after {
-      content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      background: rgba(20,22,26,.75); color: #7ddc7d; font-size: 16px; font-weight: 700;
+    .wnl-ava::after {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; letter-spacing: .02em; opacity: 0; transition: opacity .12s;
     }
+    .wnl-ava:hover::after { content: "/inv"; opacity: 1; color: #fff; background: rgba(17,18,20,.6); }
+    .wnl-ava.wnl-ok::after { content: "✓"; opacity: 1; color: #23a55a; background: rgba(17,18,20,.75); font-size: 16px; }
     .wnl-info { flex: 1; min-width: 0; }
-    .wnl-main { font-weight: 600; word-break: break-word; }
-    .wnl-main a { color: inherit; text-decoration: none; }
-    .wnl-main a:hover { text-decoration: underline; }
-    .wnl-sub { font-size: 11px; color: #9aa0a8; }
-    .wnl-dim { color: #8a8f98; font-weight: 400; }
-    .wnl-err { color: #ff8a7a; font-weight: 400; }
-    .wnl-main a.wnl-link { color: #c9a54a; font-weight: 400; }
-    .wnl-note { font-size: 11.5px; color: #9aa0a8; margin-bottom: 4px; }
+    .wnl-top { display: flex; align-items: center; gap: 8px; }
+    .wnl-name {
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-weight: 700; font-size: 14px; color: var(--cls, #f2f3f5); text-decoration: none;
+    }
+    .wnl-name:hover { text-decoration: underline; }
+    .wnl-realm { font-weight: 500; color: #949ba4; }
+    .wnl-pill {
+      flex: none; font-size: 11px; font-weight: 600; line-height: 16px; padding: 0 7px; border-radius: 999px;
+      color: var(--fac, #b5bac1); background: color-mix(in srgb, var(--fac, #b5bac1) 16%, transparent);
+    }
+    .wnl-sub { margin-top: 2px; font-size: 12px; color: #b5bac1; }
+    .wnl-sub .wnl-cls { color: var(--cls); font-weight: 600; }
+    .wnl-muted { color: #80848e; }
+    .wnl-main { font-weight: 600; word-break: break-word; color: #f2f3f5; }
+    .wnl-dim { color: #949ba4; font-weight: 400; }
+    .wnl-err { color: #f23f43; font-weight: 400; }
+    .wnl-link { color: #00a8fc; font-weight: 400; text-decoration: none; }
+    .wnl-link:hover { text-decoration: underline; }
+    .wnl-note { font-size: 12px; color: #949ba4; margin: 0 0 6px; }
     .wnl-spin {
-      display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: -1px;
-      border: 2px solid #555; border-top-color: #c9a54a; border-radius: 50%; animation: wnl-r .8s linear infinite;
+      display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px;
+      border: 2px solid #4e5058; border-top-color: #dbdee1; border-radius: 50%; animation: wnl-r .7s linear infinite;
     }
     .wnl-toast {
-      font: 12px/1.3 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; white-space: nowrap;
-      color: #7ddc7d; background: #16181d; border: 1px solid #2f5a2f; border-radius: 6px;
-      padding: 4px 8px; box-shadow: 0 4px 14px rgba(0,0,0,.5);
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+      font: 600 13px/1.3 ${FONT}; color: #dbdee1; background: #111214;
+      border-radius: 8px; padding: 6px 10px; box-shadow: 0 6px 18px rgba(0,0,0,.45); animation: wnl-in .12s ease-out;
     }
+    .wnl-toast::before { content: "✓"; color: #23a55a; font-weight: 700; }
     @keyframes wnl-r { to { transform: rotate(360deg); } }
   `;
 
@@ -96,13 +110,9 @@
     return realm ? `${name}-${String(realm).replace(/\s+/g, '')}` : name;
   }
 
-  function createPanel(onClose) {
+  function createPanel() {
     const list = h('div', { class: 'wnl-list' });
-    const panel = h('div', { class: 'wnl-panel' },
-      h('div', { class: 'wnl-head' },
-        h('span', null, 'Raider.IO'),
-        onClose ? h('button', { class: 'wnl-x', title: 'Закрыть (Esc)', onclick: onClose }, '×') : null),
-      list);
+    const panel = h('div', { class: 'wnl-panel' }, list);
     return { panel, list };
   }
 
@@ -116,19 +126,21 @@
   function charView(p) {
     const t = T();
     const ingame = inGameName(p.name, p.realm);
+    const cls = t.CLASS_COLOR[p.class] || '#f2f3f5';
+    const fac = t.FACTION_COLOR[p.faction] || '#b5bac1';
     const spec = p.spec ? `${t.t('SPEC', p.spec)}${p.role ? ' (' + t.t('ROLE', p.role) + ')' : ''}` : null;
-    const sub = [
+    const rest = [
       spec,
       t.t('RACE', p.race) || null,
       p.itemLevel ? `${p.itemLevel} ilvl` : null,
-      p.guild ? `<${p.guild}>` : null,
-      p.region ? String(p.region).toUpperCase() : null,
-      p.source === 'blizzard' ? 'Blizzard' : null,
+      p.guild ? `‹${p.guild}›` : null,
     ].filter(Boolean).join(' · ');
+    const tail = [p.region ? String(p.region).toUpperCase() : null, p.source === 'blizzard' ? 'Blizzard' : null]
+      .filter(Boolean).join(' · ');
 
     // клик по аватару копирует команду приглашения: /inv Ник-Сервер (сервер без пробелов, как в игре)
     const invite = `/inv ${ingame}`;
-    const ava = h('div', { class: 'wnl-ava', title: `Клик — скопировать «${invite}»` },
+    const ava = h('div', { class: 'wnl-ava', title: `Скопировать «${invite}»` },
       p.thumbnail ? h('img', { src: p.thumbnail, alt: '' }) : null);
     ava.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); });
     ava.addEventListener('click', (e) => {
@@ -140,16 +152,17 @@
       });
     });
 
-    return h('div', { class: 'wnl-char' },
+    return h('div', { class: 'wnl-char', style: `--cls:${cls};--fac:${fac}` },
       ava,
       h('div', { class: 'wnl-info' },
-        h('div', { class: 'wnl-main' },
-          h('a', { href: p.url, target: '_blank', rel: 'noopener noreferrer' }, `${p.name}-${p.realm}`),
-          ', ',
-          h('span', { style: `color:${t.CLASS_COLOR[p.class] || 'inherit'}` }, t.t('CLASS', p.class)),
-          ', ',
-          h('span', { style: `color:${t.FACTION_COLOR[p.faction] || 'inherit'}` }, t.t('FACTION', p.faction))),
-        sub ? h('div', { class: 'wnl-sub' }, sub) : null));
+        h('div', { class: 'wnl-top' },
+          h('a', { class: 'wnl-name', href: p.url, target: '_blank', rel: 'noopener noreferrer', title: 'Открыть профиль' },
+            p.name, h('span', { class: 'wnl-realm' }, `-${p.realm}`)),
+          p.faction ? h('span', { class: 'wnl-pill' }, t.t('FACTION', p.faction)) : null),
+        h('div', { class: 'wnl-sub' },
+          h('span', { class: 'wnl-cls' }, t.t('CLASS', p.class)),
+          rest ? ` · ${rest}` : '',
+          tail ? h('span', { class: 'wnl-muted' }, ` · ${tail}`) : null)));
   }
 
   function fillRow(row, cand, res) {

@@ -118,7 +118,7 @@
     origin = from;
     anchor = anchorSpec;
     const id = ++requestId;
-    const { panel, list } = WNL.ui.createPanel(close);
+    const { panel, list } = WNL.ui.createPanel();
     shadow.append(panel);
 
     const rows = candidates.map((c) => {

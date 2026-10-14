@@ -1,61 +1,77 @@
 /* Подсветка ников в переписке (CSS Custom Highlight API, DOM страницы не меняется).
- * Найденные ники — плашка в цвет класса (официальные цвета WoW); цвет текста выбран по контрасту. */
+ * Найденный ник — цвет класса, «жирный» (через тень текста: font-weight в ::highlight недоступен)
+ * и лёгкая заливка того же цвета, как упоминания в самом Discord. */
 ::highlight(wnl-nick) {
-  background-color: rgba(201, 165, 74, 0.16);
-  text-decoration: underline dotted rgba(201, 165, 74, 0.95);
+  text-decoration: underline dotted rgba(255, 255, 255, 0.35);
 }
 ::highlight(wnl-miss) {
-  text-decoration: underline dotted rgba(140, 140, 140, 0.8);
+  text-decoration: underline dotted rgba(148, 155, 164, 0.45);
+}
+::highlight(wnl-hover) {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 ::highlight(wnl-c-warrior) {
-  color: #111214;
-  background-color: #C69B6D;
+  color: #C69B6D;
+  background-color: rgba(198, 155, 109, 0.12);
+  text-shadow: 0.35px 0 0 #C69B6D, -0.35px 0 0 #C69B6D;
 }
 ::highlight(wnl-c-paladin) {
-  color: #111214;
-  background-color: #F48CBA;
+  color: #F48CBA;
+  background-color: rgba(244, 140, 186, 0.12);
+  text-shadow: 0.35px 0 0 #F48CBA, -0.35px 0 0 #F48CBA;
 }
 ::highlight(wnl-c-hunter) {
-  color: #111214;
-  background-color: #AAD372;
+  color: #AAD372;
+  background-color: rgba(170, 211, 114, 0.12);
+  text-shadow: 0.35px 0 0 #AAD372, -0.35px 0 0 #AAD372;
 }
 ::highlight(wnl-c-rogue) {
-  color: #111214;
-  background-color: #FFF468;
+  color: #FFF468;
+  background-color: rgba(255, 244, 104, 0.12);
+  text-shadow: 0.35px 0 0 #FFF468, -0.35px 0 0 #FFF468;
 }
 ::highlight(wnl-c-priest) {
-  color: #111214;
-  background-color: #FFFFFF;
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.12);
+  text-shadow: 0.35px 0 0 #FFFFFF, -0.35px 0 0 #FFFFFF;
 }
 ::highlight(wnl-c-death-knight) {
-  color: #ffffff;
-  background-color: #C41E3A;
+  color: #F0435F;
+  background-color: rgba(240, 67, 95, 0.12);
+  text-shadow: 0.35px 0 0 #F0435F, -0.35px 0 0 #F0435F;
 }
 ::highlight(wnl-c-shaman) {
-  color: #ffffff;
-  background-color: #0070DD;
+  color: #2E8FFF;
+  background-color: rgba(46, 143, 255, 0.12);
+  text-shadow: 0.35px 0 0 #2E8FFF, -0.35px 0 0 #2E8FFF;
 }
 ::highlight(wnl-c-mage) {
-  color: #111214;
-  background-color: #3FC7EB;
+  color: #3FC7EB;
+  background-color: rgba(63, 199, 235, 0.12);
+  text-shadow: 0.35px 0 0 #3FC7EB, -0.35px 0 0 #3FC7EB;
 }
 ::highlight(wnl-c-warlock) {
-  color: #111214;
-  background-color: #8788EE;
+  color: #8788EE;
+  background-color: rgba(135, 136, 238, 0.12);
+  text-shadow: 0.35px 0 0 #8788EE, -0.35px 0 0 #8788EE;
 }
 ::highlight(wnl-c-monk) {
-  color: #111214;
-  background-color: #00FF98;
+  color: #00FF98;
+  background-color: rgba(0, 255, 152, 0.12);
+  text-shadow: 0.35px 0 0 #00FF98, -0.35px 0 0 #00FF98;
 }
 ::highlight(wnl-c-druid) {
-  color: #111214;
-  background-color: #FF7C0A;
+  color: #FF7C0A;
+  background-color: rgba(255, 124, 10, 0.12);
+  text-shadow: 0.35px 0 0 #FF7C0A, -0.35px 0 0 #FF7C0A;
 }
 ::highlight(wnl-c-demon-hunter) {
-  color: #ffffff;
-  background-color: #A330C9;
+  color: #C25BEA;
+  background-color: rgba(194, 91, 234, 0.12);
+  text-shadow: 0.35px 0 0 #C25BEA, -0.35px 0 0 #C25BEA;
 }
 ::highlight(wnl-c-evoker) {
-  color: #111214;
-  background-color: #33937F;
+  color: #3FBF9F;
+  background-color: rgba(63, 191, 159, 0.12);
+  text-shadow: 0.35px 0 0 #3FBF9F, -0.35px 0 0 #3FBF9F;
 }

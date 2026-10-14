@@ -9,13 +9,14 @@
       'Death Knight': 'Рыцарь смерти', 'Shaman': 'Шаман', 'Mage': 'Маг', 'Warlock': 'Чернокнижник',
       'Monk': 'Монах', 'Druid': 'Друид', 'Demon Hunter': 'Охотник на демонов', 'Evoker': 'Пробудитель',
     },
+    // цвета классов WoW; тёмные (ДК, шаман, ДХ, пробудитель) чуть осветлены, чтобы читались на тёмном фоне
     CLASS_COLOR: {
       'Warrior': '#C69B6D', 'Paladin': '#F48CBA', 'Hunter': '#AAD372', 'Rogue': '#FFF468', 'Priest': '#FFFFFF',
-      'Death Knight': '#C41E3A', 'Shaman': '#0070DD', 'Mage': '#3FC7EB', 'Warlock': '#8788EE',
-      'Monk': '#00FF98', 'Druid': '#FF7C0A', 'Demon Hunter': '#A330C9', 'Evoker': '#33937F',
+      'Death Knight': '#F0435F', 'Shaman': '#2E8FFF', 'Mage': '#3FC7EB', 'Warlock': '#8788EE',
+      'Monk': '#00FF98', 'Druid': '#FF7C0A', 'Demon Hunter': '#C25BEA', 'Evoker': '#3FBF9F',
     },
     FACTION: { alliance: 'Альянс', horde: 'Орда', neutral: 'Нейтрал' },
-    FACTION_COLOR: { alliance: '#4a8cff', horde: '#ff4a4a', neutral: '#c8c8c8' },
+    FACTION_COLOR: { alliance: '#4f9dff', horde: '#ff5a5a', neutral: '#b5bac1' },
     ROLE: { TANK: 'танк', HEALING: 'хил', DPS: 'дд' },
     SPEC: {
       'Arms': 'Оружие', 'Fury': 'Неистовство', 'Protection': 'Защита', 'Holy': 'Свет', 'Retribution': 'Воздаяние',

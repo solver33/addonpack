@@ -68,7 +68,7 @@
       results.innerHTML = '<div class="empty">Не нашёл ничего похожего на ник. Формат: Ник-Сервер.</div>';
       return;
     }
-    const { panel, list } = WNL.ui.createPanel(null);
+    const { panel, list } = WNL.ui.createPanel();
     results.append(panel);
     await Promise.all(candidates.map(async (c) => {
       const row = WNL.ui.createRow(c);

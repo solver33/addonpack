@@ -26,6 +26,8 @@
 
   const base = new Highlight();
   const miss = new Highlight();
+  const hoverHl = new Highlight();
+  hoverHl.priority = 1;
   const classHl = new Map(); // 'warrior' -> Highlight
   const entries = new Map(); // контейнер -> { text, items: [{ range, cand }] }
   const results = new Map(); // cand.key -> результат поиска
@@ -43,6 +45,7 @@
     active = true;
     CSS.highlights.set('wnl-nick', base);
     CSS.highlights.set('wnl-miss', miss);
+    CSS.highlights.set('wnl-hover', hoverHl);
     classHl.forEach((h, cls) => CSS.highlights.set(`wnl-c-${cls}`, h));
     observer = new MutationObserver(onMutations);
     if (!document.hidden) resume();
@@ -60,8 +63,8 @@
     removeEventListener('scroll', onScroll, { capture: true });
     document.removeEventListener('mousemove', onMouseMove);
     removeEventListener('click', onClick, true);
-    ['wnl-nick', 'wnl-miss', ...[...classHl.keys()].map((c) => `wnl-c-${c}`)].forEach((n) => CSS.highlights.delete(n));
-    [base, miss, ...classHl.values()].forEach((h) => h.clear());
+    ['wnl-nick', 'wnl-miss', 'wnl-hover', ...[...classHl.keys()].map((c) => `wnl-c-${c}`)].forEach((n) => CSS.highlights.delete(n));
+    [base, miss, hoverHl, ...classHl.values()].forEach((h) => h.clear());
     entries.clear();
     pending.clear();
   }
@@ -326,11 +329,14 @@
       hideTimer = 0;
       if (it === hovered) return;
       hovered = it;
+      hoverHl.clear();
+      hoverHl.add(it.range);
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => open(it), HOVER_DELAY);
       return;
     }
     hovered = null;
+    hoverHl.clear();
     clearTimeout(hoverTimer);
     if (page.origin === 'hover' && !hideTimer) {
       hideTimer = setTimeout(() => { hideTimer = 0; if (page.origin === 'hover') page.close(); }, HIDE_DELAY);
