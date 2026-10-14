@@ -42,6 +42,10 @@ check('гром гремит за окном', []);
 check('Azjol-Nerub', []);
 check('Король-лич', []);
 check("Kragar-Mal'Ganis", ['Kragar-malganis:high']);
+check('Написать @НаКеМ', []);
+check('Спасибо @Вася', []);
+check('Kragar @ Silvermoon', ['Kragar-silvermoon:high']);
+check('Kragar@Newrealm', ['Kragar-newrealm:high']);
 check('Kragar#1234', []); // battletag — не персонаж
 
 if (failed) { console.log(`\n${failed} failed`); process.exit(1); }

@@ -219,6 +219,9 @@
         push(Object.assign({ name: capitalize(nt.text), start: nt.start, end: tokens[span.to].end }, realmFromKnown(span.realm)));
         for (let k = ni; k <= span.to; k++) tokens[k].used = true;
         DASH_RE.lastIndex = tokens[span.to].end;
+      } else if (/@/.test(text.slice(nt.end, rt.start)) && /\s/.test(text.slice(nt.end, rt.start))) {
+        // «Написать @НаКеМ», «спасибо @Вася» — упоминание, а не Ник@Сервер
+        continue;
       } else if (isUpper(nt.text[0]) && isUpper(rt.text[0]) && REALM_WORD_RE.test(rt.text) && !REGION_TOKENS[rt.text]) {
         push(Object.assign({ name: capitalize(nt.text), start: nt.start, end: rt.end, confidence: 'medium' }, realmFromRaw(rt.text)));
         nt.used = rt.used = true;

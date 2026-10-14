@@ -12,7 +12,10 @@
   WNL.__highlight = true;
 
   const BLOCK = 'body,div,p,li,td,th,dd,dt,blockquote,article,section,h1,h2,h3,h4,h5,h6,pre,header,footer,main,aside,form,ul,ol,table,tr';
-  const SKIP = 'script,style,noscript,textarea,input,select,svg,[contenteditable=""],[contenteditable="true"],[data-wnl]';
+  const SKIP = 'script,style,noscript,textarea,input,select,svg,[contenteditable=""],[contenteditable="true"],' +
+    '[role="textbox"],[class*="placeholder"],[class*="textArea"],[data-wnl]';
+  // ищем только в сообщениях чата: поле ввода, подсказки, названия каналов и т.п. не трогаем
+  const MESSAGES = '[id^="chat-messages-"],[id^="message-content-"],[id^="message-reply-context-"]';
   const MAX_TEXT = 20000;
   const SCAN_DELAY = 400; // мс: изменения на странице собираются и обрабатываются пачкой
   const MOVE_INTERVAL = 100; // мс: как часто проверять, что под курсором
@@ -90,7 +93,7 @@
 
   function containerOf(node) {
     const el = node.nodeType === 1 ? node : node.parentElement;
-    if (!el || el.closest(SKIP)) return null;
+    if (!el || !el.closest(MESSAGES) || el.closest(SKIP)) return null;
     return el.closest(BLOCK);
   }
 
