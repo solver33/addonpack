@@ -315,15 +315,17 @@
   }
 
   function onMouseMove(e) {
-    lastMove = e;
+    // composedPath() доступен только во время события, поэтому «над карточкой ли мышь» считаем сразу
+    lastMove = { x: e.clientX, y: e.clientY, buttons: e.buttons, inCard: page.isInCard(e) };
+    if (lastMove.inCard) { clearTimeout(hideTimer); hideTimer = 0; return; }
     if (moveQueued || !entries.size) return;
     moveQueued = true;
     setTimeout(() => { moveQueued = false; handleMove(lastMove); }, MOVE_INTERVAL);
   }
 
-  function handleMove(e) {
-    if (page.isInCard(e)) { clearTimeout(hideTimer); hideTimer = 0; return; }
-    const it = e.buttons ? null : itemAt(e.clientX, e.clientY);
+  function handleMove(m) {
+    if (m.inCard) { clearTimeout(hideTimer); hideTimer = 0; return; }
+    const it = m.buttons ? null : itemAt(m.x, m.y);
     if (it) {
       clearTimeout(hideTimer);
       hideTimer = 0;

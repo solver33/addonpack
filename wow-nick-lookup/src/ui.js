@@ -18,30 +18,27 @@
     .wnl-list { max-height: 60vh; overflow-y: auto; scrollbar-width: thin; }
     .wnl-row { padding: 6px 8px; border-radius: 7px; }
     .wnl-row + .wnl-row { margin-top: 2px; }
-    .wnl-row:hover { background: rgba(255,255,255,.04); }
     .wnl-row[hidden] { display: none; }
-    .wnl-char { display: flex; align-items: center; gap: 10px; }
-    .wnl-char + .wnl-char { margin-top: 8px; }
+    .wnl-char {
+      display: flex; align-items: center; gap: 10px; margin: -6px -8px; padding: 6px 8px; border-radius: 7px;
+      color: inherit; text-decoration: none; cursor: pointer;
+    }
+    .wnl-char + .wnl-char { margin-top: 2px; }
+    .wnl-char:hover { background: rgba(255,255,255,.06); }
+    .wnl-char:hover .wnl-name { text-decoration: underline; }
+    .wnl-go { flex: none; color: #80848e; font-size: 14px; opacity: 0; transition: opacity .12s; }
+    .wnl-char:hover .wnl-go { opacity: 1; }
     .wnl-ava {
       position: relative; width: 34px; height: 34px; border-radius: 9px; flex: none; overflow: hidden;
-      background: #2b2d31; cursor: pointer; box-shadow: 0 0 0 2px var(--cls, #4e5058);
-      transition: transform .12s ease;
+      background: #2b2d31; box-shadow: 0 0 0 2px var(--cls, #4e5058);
     }
-    .wnl-ava:hover { transform: scale(1.06); }
     .wnl-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .wnl-ava::after {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 700; letter-spacing: .02em; opacity: 0; transition: opacity .12s;
-    }
-    .wnl-ava:hover::after { content: "/inv"; opacity: 1; color: #fff; background: rgba(17,18,20,.6); }
-    .wnl-ava.wnl-ok::after { content: "✓"; opacity: 1; color: #23a55a; background: rgba(17,18,20,.75); font-size: 16px; }
     .wnl-info { flex: 1; min-width: 0; }
     .wnl-top { display: flex; align-items: center; gap: 8px; }
     .wnl-name {
       flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       font-weight: 700; font-size: 14px; color: var(--cls, #f2f3f5); text-decoration: none;
     }
-    .wnl-name:hover { text-decoration: underline; }
     .wnl-realm { font-weight: 500; color: #949ba4; }
     .wnl-pill {
       flex: none; font-size: 11px; font-weight: 600; line-height: 16px; padding: 0 7px; border-radius: 999px;
@@ -125,7 +122,6 @@
 
   function charView(p) {
     const t = T();
-    const ingame = inGameName(p.name, p.realm);
     const cls = t.CLASS_COLOR[p.class] || '#f2f3f5';
     const fac = t.FACTION_COLOR[p.faction] || '#b5bac1';
     const spec = p.spec ? `${t.t('SPEC', p.spec)}${p.role ? ' (' + t.t('ROLE', p.role) + ')' : ''}` : null;
@@ -138,31 +134,26 @@
     const tail = [p.region ? String(p.region).toUpperCase() : null, p.source === 'blizzard' ? 'Blizzard' : null]
       .filter(Boolean).join(' · ');
 
-    // клик по аватару копирует команду приглашения: /inv Ник-Сервер (сервер без пробелов, как в игре)
-    const invite = `/inv ${ingame}`;
-    const ava = h('div', { class: 'wnl-ava', title: `Скопировать «${invite}»` },
-      p.thumbnail ? h('img', { src: p.thumbnail, alt: '' }) : null);
-    ava.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); });
-    ava.addEventListener('click', (e) => {
+    // вся плашка — ссылка: профиль Raider.IO или армори на сайте WoW (если найден через Blizzard)
+    const open = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      copyText(invite).then(() => {
-        ava.classList.add('wnl-ok');
-        setTimeout(() => ava.classList.remove('wnl-ok'), 1000);
-      });
-    });
+      window.open(p.url, '_blank', 'noopener');
+    };
+    const site = p.source === 'blizzard' ? 'армори WoW' : 'Raider.IO';
 
-    return h('div', { class: 'wnl-char', style: `--cls:${cls};--fac:${fac}` },
-      ava,
+    return h('a', { class: 'wnl-char', href: p.url, target: '_blank', rel: 'noopener noreferrer',
+      title: `Открыть на ${site}`, style: `--cls:${cls};--fac:${fac}`, onclick: open },
+      h('div', { class: 'wnl-ava' }, p.thumbnail ? h('img', { src: p.thumbnail, alt: '' }) : null),
       h('div', { class: 'wnl-info' },
         h('div', { class: 'wnl-top' },
-          h('a', { class: 'wnl-name', href: p.url, target: '_blank', rel: 'noopener noreferrer', title: 'Открыть профиль' },
-            p.name, h('span', { class: 'wnl-realm' }, `-${p.realm}`)),
+          h('span', { class: 'wnl-name' }, p.name, h('span', { class: 'wnl-realm' }, `-${p.realm}`)),
           p.faction ? h('span', { class: 'wnl-pill' }, t.t('FACTION', p.faction)) : null),
         h('div', { class: 'wnl-sub' },
           h('span', { class: 'wnl-cls' }, t.t('CLASS', p.class)),
           rest ? ` · ${rest}` : '',
-          tail ? h('span', { class: 'wnl-muted' }, ` · ${tail}`) : null)));
+          tail ? h('span', { class: 'wnl-muted' }, ` · ${tail}`) : null)),
+      h('span', { class: 'wnl-go' }, '↗'));
   }
 
   function fillRow(row, cand, res) {
