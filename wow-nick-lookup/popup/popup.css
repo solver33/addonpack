@@ -17,3 +17,19 @@ summary { cursor: pointer; color: #9aa0a8; }
 details label { display: block; margin-top: 8px; color: #9aa0a8; font-size: 12px; }
 details label select, details label input[type="text"] { margin-top: 3px; }
 details label.check { display: flex; gap: 6px; align-items: flex-start; }
+details input[type="password"] {
+  width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; margin-top: 3px;
+  border: 1px solid #2c3038; background: #1a1d23; color: inherit; font: inherit;
+}
+.hint { color: #8a8f98; font-size: 12px; margin: 6px 0; }
+ol.hint { padding-left: 18px; }
+.hint a { color: #c9a54a; }
+.row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+button {
+  padding: 5px 12px; border-radius: 6px; border: 1px solid #6b5420; background: #2a2618; color: #e8e6e3;
+  font: inherit; cursor: pointer;
+}
+button:hover { background: #3a3320; }
+#bnetBadge { color: #7ddc7d; font-size: 12px; }
+.ok { color: #7ddc7d; }
+.bad { color: #ff8a7a; }

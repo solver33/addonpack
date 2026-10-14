@@ -41,6 +41,26 @@
     </label>
   </details>
 
+  <details id="bnet">
+    <summary>Запасной поиск через Blizzard <span id="bnetBadge"></span></summary>
+    <p class="hint">
+      Если Raider.IO не находит персонажа, расширение спросит официальный API Blizzard.
+      Для этого нужны бесплатные ключи (один раз, ~2 минуты):
+    </p>
+    <ol class="hint">
+      <li>Зайди на <a href="https://develop.battle.net/access/clients" target="_blank">develop.battle.net</a> своим Battle.net-аккаунтом.</li>
+      <li>Нажми <b>Create Client</b>, введи любое имя, Redirect URL можно не заполнять, отметь, что сервис не для продажи, сохрани.</li>
+      <li>Скопируй сюда <b>Client ID</b> и <b>Client Secret</b>.</li>
+    </ol>
+    <label>Client ID <input id="bnetId" type="text" autocomplete="off" spellcheck="false"></label>
+    <label>Client Secret <input id="bnetSecret" type="password" autocomplete="off" spellcheck="false"></label>
+    <div class="row">
+      <button id="bnetTest" type="button">Проверить</button>
+      <span id="bnetStatus" class="hint"></span>
+    </div>
+    <p class="hint">Ключи хранятся только в этом браузере. Без ключей у ненайденного персонажа будет ссылка «армори ↗» на сайт Blizzard.</p>
+  </details>
+
   <script src="../src/realms.js"></script>
   <script src="../src/parser.js"></script>
   <script src="../src/i18n.js"></script>

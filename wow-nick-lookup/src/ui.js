@@ -41,6 +41,7 @@
     .wnl-sub { font-size: 11px; color: #9aa0a8; }
     .wnl-dim { color: #8a8f98; font-weight: 400; }
     .wnl-err { color: #ff8a7a; font-weight: 400; }
+    .wnl-main a.wnl-link { color: #c9a54a; font-weight: 400; }
     .wnl-note { font-size: 11.5px; color: #9aa0a8; margin-bottom: 4px; }
     .wnl-spin {
       display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: -1px;
@@ -112,6 +113,7 @@
       p.itemLevel ? `${p.itemLevel} ilvl` : null,
       p.guild ? `<${p.guild}>` : null,
       p.region ? String(p.region).toUpperCase() : null,
+      p.source === 'blizzard' ? 'Blizzard' : null,
     ].filter(Boolean).join(' · ');
 
     // клик по аватару копирует команду приглашения: /inv Ник-Сервер (сервер без пробелов, как в игре)
@@ -149,12 +151,19 @@
       row.hidden = false;
       return;
     }
-    const msg = {
-      notfound: ' — не найден на Raider.IO',
-      norealm: ' — не указан сервер',
-    }[res.status];
-    row.append(h('div', { class: 'wnl-main' }, label(cand),
-      msg ? h('span', { class: 'wnl-dim' }, msg) : h('span', { class: 'wnl-err' }, ` — ${res.message || 'ошибка'}`)));
+    const main = h('div', { class: 'wnl-main' }, label(cand));
+    if (res.status === 'notfound') {
+      main.append(h('span', { class: 'wnl-dim' }, res.checkedBlizzard ? ' — не найден ни на Raider.IO, ни у Blizzard' : ' — не найден на Raider.IO'));
+      if (res.armory) {
+        main.append(h('span', { class: 'wnl-dim' }, ' · '),
+          h('a', { class: 'wnl-link', href: res.armory, target: '_blank', rel: 'noopener noreferrer' }, 'армори ↗'));
+      }
+    } else if (res.status === 'norealm') {
+      main.append(h('span', { class: 'wnl-dim' }, ' — не указан сервер'));
+    } else {
+      main.append(h('span', { class: 'wnl-err' }, ` — ${res.message || 'ошибка'}`));
+    }
+    row.append(main);
   }
 
   WNL.ui = { CSS, createPanel, createRow, fillRow, copyText };

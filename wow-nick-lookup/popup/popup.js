@@ -17,6 +17,34 @@
     });
   });
 
+  // ключи Blizzard API — только локально, без синхронизации
+  const bnet = await chrome.storage.local.get({ bnetId: '', bnetSecret: '' });
+  const bnetStatus = $('bnetStatus');
+  const setBadge = () => { $('bnetBadge').textContent = bnet.bnetId && bnet.bnetSecret ? '· включён' : ''; };
+  setBadge();
+  ['bnetId', 'bnetSecret'].forEach((k) => {
+    const el = $(k);
+    el.value = bnet[k];
+    el.addEventListener('change', async () => {
+      bnet[k] = el.value.trim();
+      await chrome.storage.local.set({ [k]: bnet[k] });
+      bnetStatus.textContent = '';
+      setBadge();
+    });
+  });
+  $('bnetTest').addEventListener('click', async () => {
+    for (const k of ['bnetId', 'bnetSecret']) bnet[k] = $(k).value.trim();
+    await chrome.storage.local.set(bnet);
+    setBadge();
+    bnetStatus.className = 'hint';
+    bnetStatus.textContent = 'проверяю…';
+    chrome.runtime.sendMessage({ type: 'bnetTest' }, (res) => {
+      const ok = res && res.ok;
+      bnetStatus.className = ok ? 'ok' : 'bad';
+      bnetStatus.textContent = ok ? '✓ ключи работают' : (res && res.message) || 'ошибка';
+    });
+  });
+
   // ручной поиск по вставленному тексту
   const text = $('text');
   const results = $('results');
