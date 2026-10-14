@@ -1,0 +1,11 @@
+{
+  "name": "solver33-pack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solver33 pack: Chrome extension that looks up WoW characters on raider.io, plus an in-game invite panel addon.",
+  "scripts": {
+    "test": "node --test",
+    "build:realms": "node scripts/build-realms.js"
+  },
+  "license": "MIT"
+}
