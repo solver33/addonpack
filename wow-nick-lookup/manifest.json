@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "WoW Nick Lookup — Raider.IO",
-  "version": "1.4.0",
-  "description": "Выдели ник персонажа WoW (Ник-Сервер или «ник … сервер …») — рядом с курсором появятся класс и фракция с Raider.IO.",
+  "version": "1.5.0",
+  "description": "Ники WoW в Discord (в браузере): подсветка цветом класса, карточка с Raider.IO при наведении, клик — копирует /inv Ник-Сервер.",
   "permissions": [
     "storage"
   ],
@@ -17,7 +17,7 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "https://discord.com/*"
       ],
       "js": [
         "src/realms.js",

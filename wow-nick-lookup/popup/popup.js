@@ -9,7 +9,10 @@
   fields.forEach((k) => {
     const el = $(k);
     if (el.type === 'checkbox') el.checked = !!settings[k];
-    else el.value = settings[k];
+    else {
+      el.value = settings[k];
+      if (el.tagName === 'SELECT' && el.selectedIndex < 0) el.selectedIndex = 0;
+    }
     el.addEventListener('change', () => {
       settings[k] = el.type === 'checkbox' ? el.checked : el.value.trim();
       chrome.storage.sync.set({ [k]: settings[k] });

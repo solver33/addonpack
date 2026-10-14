@@ -1,4 +1,6 @@
-// Сам находит ники в переписке, подчёркивает их и показывает карточку при наведении.
+// Сам находит ники в переписке Discord, подчёркивает их и показывает карточку при наведении.
+// Работает только по изменениям страницы (новые сообщения), пачками раз в SCAN_DELAY мс;
+// в фоновой вкладке полностью засыпает.
 //
 // DOM страницы не меняется: подсветка сделана через CSS Custom Highlight API (как подсветка поиска
 // в браузере). Поэтому React-приложения вроде Discord не ломаются.
@@ -12,6 +14,9 @@
   const BLOCK = 'body,div,p,li,td,th,dd,dt,blockquote,article,section,h1,h2,h3,h4,h5,h6,pre,header,footer,main,aside,form,ul,ol,table,tr';
   const SKIP = 'script,style,noscript,textarea,input,select,svg,[contenteditable=""],[contenteditable="true"],[data-wnl]';
   const MAX_TEXT = 20000;
+  const SCAN_DELAY = 400; // мс: изменения на странице собираются и обрабатываются пачкой
+  const MOVE_INTERVAL = 100; // мс: как часто проверять, что под курсором
+  const MAX_RESULTS = 1000;
   const HOVER_DELAY = 250;
   const HIDE_DELAY = 350;
   const PREFETCH_CONCURRENCY = 2;
@@ -27,9 +32,7 @@
   // ---------- включение/выключение ----------
 
   function wanted(s) {
-    if (!s.enabled || s.highlight === 'off') return false;
-    if (s.highlight === 'all') return true;
-    return /(^|\.)discord\.com$/.test(location.hostname);
+    return s.enabled && s.highlight !== 'off' && location.hostname === 'discord.com';
   }
 
   function start() {
@@ -39,8 +42,8 @@
     CSS.highlights.set('wnl-miss', miss);
     classHl.forEach((h, cls) => CSS.highlights.set(`wnl-c-${cls}`, h));
     observer = new MutationObserver(onMutations);
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    queueTextIn(document.body);
+    if (!document.hidden) resume();
+    document.addEventListener('visibilitychange', onVisibility);
     addEventListener('scroll', onScroll, { passive: true, capture: true });
     document.addEventListener('mousemove', onMouseMove, { passive: true });
     addEventListener('click', onClick, true);
@@ -50,6 +53,7 @@
     if (!active) return;
     active = false;
     observer.disconnect();
+    document.removeEventListener('visibilitychange', onVisibility);
     removeEventListener('scroll', onScroll, { capture: true });
     document.removeEventListener('mousemove', onMouseMove);
     removeEventListener('click', onClick, true);
@@ -60,6 +64,24 @@
   }
 
   page.onSettings((s) => (wanted(s) ? start() : stop()));
+
+  // вкладка в фоне — ничего не делаем; вернулись — один раз досканировали изменения
+  function resume() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    queueTextIn(document.body);
+  }
+
+  function onVisibility() {
+    if (!active) return;
+    if (document.hidden) {
+      observer.disconnect();
+      clearTimeout(flushTimer);
+      flushTimer = 0;
+      pending.clear();
+    } else {
+      resume();
+    }
+  }
 
   // ---------- поиск ников в тексте страницы ----------
 
@@ -75,7 +97,7 @@
   function queue(container) {
     if (!container) return;
     pending.add(container);
-    if (!flushTimer) flushTimer = setTimeout(flush, 150);
+    if (!flushTimer) flushTimer = setTimeout(flush, SCAN_DELAY);
   }
 
   function queueTextIn(root) {
@@ -90,6 +112,9 @@
 
   function onMutations(list) {
     for (const m of list) {
+      // поле ввода сообщения и сама карточка расширения — пропускаем сразу
+      const t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+      if (!t || t.closest(SKIP)) continue;
       if (m.type === 'characterData') queue(containerOf(m.target));
       else {
         m.addedNodes.forEach(queueTextIn);
@@ -204,6 +229,7 @@
 
   function remember(cand, res) {
     if (res.status === 'error') return;
+    if (results.size >= MAX_RESULTS) results.delete(results.keys().next().value);
     results.set(cand.key, res);
     entries.forEach((e) => e.items.forEach((it) => { if (it.cand.key === cand.key) mark(it.range, it.cand); }));
   }
@@ -279,9 +305,9 @@
 
   function onMouseMove(e) {
     lastMove = e;
-    if (moveQueued) return;
+    if (moveQueued || !entries.size) return;
     moveQueued = true;
-    requestAnimationFrame(() => { moveQueued = false; handleMove(lastMove); });
+    setTimeout(() => { moveQueued = false; handleMove(lastMove); }, MOVE_INTERVAL);
   }
 
   function handleMove(e) {
