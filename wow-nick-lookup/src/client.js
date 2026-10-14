@@ -9,6 +9,8 @@
     regions: 'eu,us', // порядок регионов для поиска
     defaultRealm: '', // сервер по умолчанию для ников без сервера
     searchNameOnly: true, // искать ники без сервера через поиск Raider.IO
+    highlight: 'discord', // подсветка ников в переписке: 'discord' | 'all' | 'off'
+    colorize: true, // сразу раскрашивать подсвеченные ники в цвет класса
   };
 
   WNL.loadSettings = function () {

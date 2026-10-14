@@ -1,0 +1,60 @@
+/* Подсветка ников в переписке (CSS Custom Highlight API, DOM страницы не меняется). */
+::highlight(wnl-nick) {
+  background-color: rgba(201, 165, 74, 0.16);
+  text-decoration: underline dotted rgba(201, 165, 74, 0.95);
+}
+::highlight(wnl-miss) {
+  text-decoration: underline dotted rgba(140, 140, 140, 0.8);
+}
+::highlight(wnl-c-warrior) {
+  background-color: rgba(198, 155, 109, 0.2);
+  text-decoration: underline solid #C69B6D;
+}
+::highlight(wnl-c-paladin) {
+  background-color: rgba(244, 140, 186, 0.2);
+  text-decoration: underline solid #F48CBA;
+}
+::highlight(wnl-c-hunter) {
+  background-color: rgba(170, 211, 114, 0.2);
+  text-decoration: underline solid #AAD372;
+}
+::highlight(wnl-c-rogue) {
+  background-color: rgba(255, 244, 104, 0.2);
+  text-decoration: underline solid #FFF468;
+}
+::highlight(wnl-c-priest) {
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: underline solid #FFFFFF;
+}
+::highlight(wnl-c-death-knight) {
+  background-color: rgba(196, 30, 58, 0.2);
+  text-decoration: underline solid #C41E3A;
+}
+::highlight(wnl-c-shaman) {
+  background-color: rgba(0, 112, 221, 0.2);
+  text-decoration: underline solid #0070DD;
+}
+::highlight(wnl-c-mage) {
+  background-color: rgba(63, 199, 235, 0.2);
+  text-decoration: underline solid #3FC7EB;
+}
+::highlight(wnl-c-warlock) {
+  background-color: rgba(135, 136, 238, 0.2);
+  text-decoration: underline solid #8788EE;
+}
+::highlight(wnl-c-monk) {
+  background-color: rgba(0, 255, 152, 0.2);
+  text-decoration: underline solid #00FF98;
+}
+::highlight(wnl-c-druid) {
+  background-color: rgba(255, 124, 10, 0.2);
+  text-decoration: underline solid #FF7C0A;
+}
+::highlight(wnl-c-demon-hunter) {
+  background-color: rgba(163, 48, 201, 0.2);
+  text-decoration: underline solid #A330C9;
+}
+::highlight(wnl-c-evoker) {
+  background-color: rgba(51, 147, 127, 0.2);
+  text-decoration: underline solid #33937F;
+}

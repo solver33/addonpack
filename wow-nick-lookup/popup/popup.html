@@ -36,6 +36,16 @@
     <label>Сервер по умолчанию (для ников без сервера)
       <input id="defaultRealm" type="text" placeholder="например, Silvermoon или Гордунни">
     </label>
+    <label>Подсвечивать ники в переписке (наведи — появится карточка)
+      <select id="highlight">
+        <option value="discord">только в Discord</option>
+        <option value="all">на всех сайтах</option>
+        <option value="off">выключено</option>
+      </select>
+    </label>
+    <label class="check">
+      <input type="checkbox" id="colorize"> Сразу раскрашивать подсвеченные ники в цвет класса (ники на экране запрашиваются заранее)
+    </label>
     <label class="check">
       <input type="checkbox" id="searchNameOnly"> Ник без сервера — искать совпадения на Raider.IO
     </label>

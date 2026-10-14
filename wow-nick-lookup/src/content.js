@@ -1,33 +1,42 @@
-// Следит за выделением текста на странице и показывает карточки персонажей рядом с курсором.
+// Карточка персонажей на странице: показывается при выделении текста или при наведении на подсвеченный ник.
 (function () {
   'use strict';
   const WNL = globalThis.WNL;
-  if (!WNL || WNL.__contentLoaded) return;
-  WNL.__contentLoaded = true;
+  if (!WNL || WNL.page) return;
 
-  let settings = Object.assign({}, WNL.DEFAULTS);
-  WNL.loadSettings().then((s) => { settings = s; });
+  const listeners = [];
+  const page = (WNL.page = {
+    settings: Object.assign({}, WNL.DEFAULTS),
+    onSettings(fn) { listeners.push(fn); },
+    show,
+    close,
+    get origin() { return host ? origin : null; },
+    isInCard: (e) => !!host && e.composedPath().includes(host),
+  });
+
+  WNL.loadSettings().then((s) => { page.settings = s; listeners.forEach((fn) => fn(s)); });
   try {
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area !== 'sync') return;
-      Object.keys(changes).forEach((k) => { settings[k] = changes[k].newValue; });
-      if (!settings.enabled) close();
+      Object.keys(changes).forEach((k) => { page.settings[k] = changes[k].newValue; });
+      if (!page.settings.enabled) close();
+      listeners.forEach((fn) => fn(page.settings));
     });
   } catch (e) { /* контекст расширения недоступен */ }
 
   let host = null;
   let shadow = null;
+  let origin = null; // 'select' | 'hover'
   let lastText = '';
   let requestId = 0;
-  let anchor = { x: 0, y: 0 };
+  let anchor = { x: 0, below: 0, above: 0 };
 
-  const inHost = (e) => host && e.composedPath().includes(host);
-
-  document.addEventListener('mousedown', (e) => { if (host && !inHost(e)) close(); }, true);
+  document.addEventListener('mousedown', (e) => { if (host && !page.isInCard(e)) close(); }, true);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); }, true);
   document.addEventListener('mouseup', (e) => {
-    if (!settings.enabled || e.button !== 0 || inHost(e)) return;
-    if (settings.trigger === 'alt' && !e.altKey) return;
+    const s = page.settings;
+    if (!s.enabled || e.button !== 0 || page.isInCard(e)) return;
+    if (s.trigger === 'alt' && !e.altKey) return;
     const x = e.clientX;
     const y = e.clientY;
     // даём браузеру дообновить выделение (двойной/тройной клик)
@@ -38,11 +47,11 @@
     const sel = window.getSelection();
     const text = sel ? sel.toString() : '';
     if (!text.trim() || text.length > 4000) return;
-    if (host && text === lastText) return;
+    if (host && origin === 'select' && text === lastText) return;
     const candidates = WNL.parse(text);
     if (!candidates.length) return;
+    show(candidates, { x: x + 14, below: y + 18, above: y - 12 }, 'select');
     lastText = text;
-    show(candidates, x, y);
   }
 
   function ensureHost() {
@@ -60,6 +69,7 @@
   function close() {
     requestId++;
     lastText = '';
+    origin = null;
     if (host) host.remove();
     host = shadow = null;
   }
@@ -69,18 +79,21 @@
     const pad = 8;
     const w = host.offsetWidth;
     const hgt = host.offsetHeight;
-    let left = anchor.x + 14;
-    let top = anchor.y + 18;
+    let left = anchor.x;
+    let top = anchor.below;
     if (left + w > innerWidth - pad) left = Math.max(pad, innerWidth - w - pad);
-    if (top + hgt > innerHeight - pad) top = Math.max(pad, anchor.y - hgt - 12);
+    if (top + hgt > innerHeight - pad) top = Math.max(pad, anchor.above - hgt);
     host.style.left = `${left}px`;
     host.style.top = `${top}px`;
   }
 
-  async function show(candidates, x, y) {
-    if (host) { host.remove(); host = null; }
+  // anchorSpec: { x, below, above } — левый край и куда ставить карточку (под точкой или над ней)
+  // onResult(cand, res) — необязательный колбэк с результатом поиска
+  async function show(candidates, anchorSpec, from, onResult) {
+    close();
     ensureHost();
-    anchor = { x, y };
+    origin = from;
+    anchor = anchorSpec;
     const id = ++requestId;
     const { panel, list } = WNL.ui.createPanel(close);
     shadow.append(panel);
@@ -94,7 +107,8 @@
     place();
 
     await Promise.all(candidates.map(async (c, i) => {
-      const res = await WNL.resolve(c, settings);
+      const res = await WNL.resolve(c, page.settings);
+      if (onResult) onResult(c, res);
       if (id !== requestId) return;
       if (c.confidence !== 'high' && res.status !== 'found') { rows[i].remove(); return; }
       WNL.ui.fillRow(rows[i], c, res);
