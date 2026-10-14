@@ -43,6 +43,7 @@
     queueTextIn(document.body);
     addEventListener('scroll', onScroll, { passive: true, capture: true });
     document.addEventListener('mousemove', onMouseMove, { passive: true });
+    addEventListener('click', onClick, true);
   }
 
   function stop() {
@@ -51,6 +52,7 @@
     observer.disconnect();
     removeEventListener('scroll', onScroll, { capture: true });
     document.removeEventListener('mousemove', onMouseMove);
+    removeEventListener('click', onClick, true);
     ['wnl-nick', 'wnl-miss', ...[...classHl.keys()].map((c) => `wnl-c-${c}`)].forEach((n) => CSS.highlights.delete(n));
     [base, miss, ...classHl.values()].forEach((h) => h.clear());
     entries.clear();
@@ -305,6 +307,27 @@
     if (!it.range.startContainer.isConnected) return;
     if (page.origin === 'select') return; // не перебиваем карточку выделения
     const r = it.range.getBoundingClientRect();
-    page.show([Object.assign({}, it.cand)], { x: r.left, below: r.bottom + 4, above: r.top - 4 }, 'hover', remember);
+    page.show([Object.assign({}, it.cand)], { right: r.right + 10, left: r.left - 10, top: r.top - 8 }, 'hover', remember);
+  }
+
+  // ---------- клик по подсвеченному нику: копируем /inv Ник-Сервер ----------
+
+  function inviteFor(cand) {
+    const res = results.get(cand.key);
+    const p = res && res.status === 'found' && res.profiles.length === 1 ? res.profiles[0] : null;
+    return '/inv ' + (p ? WNL.ui.inGameName(p.name, p.realm) : WNL.ui.inGameName(cand.name, cand.realm));
+  }
+
+  function onClick(e) {
+    if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || page.isInCard(e)) return;
+    const sel = getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim()) return; // это было выделение мышью
+    const it = itemAt(e.clientX, e.clientY);
+    if (!it) return;
+    // не даём сайту обработать клик (ссылка, профиль в Discord и т.п.)
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const text = inviteFor(it.cand);
+    WNL.ui.copyText(text).then(() => page.toast(`Скопировано: ${text}`, e.clientX, e.clientY));
   }
 })();

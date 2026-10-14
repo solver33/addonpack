@@ -47,6 +47,11 @@
       display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: -1px;
       border: 2px solid #555; border-top-color: #c9a54a; border-radius: 50%; animation: wnl-r .8s linear infinite;
     }
+    .wnl-toast {
+      font: 12px/1.3 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; white-space: nowrap;
+      color: #7ddc7d; background: #16181d; border: 1px solid #2f5a2f; border-radius: 6px;
+      padding: 4px 8px; box-shadow: 0 4px 14px rgba(0,0,0,.5);
+    }
     @keyframes wnl-r { to { transform: rotate(360deg); } }
   `;
 
@@ -86,6 +91,11 @@
     ta.remove();
   }
 
+  // формат для игры: Ник-Сервер, сервер без пробелов (Kragar-TarrenMill)
+  function inGameName(name, realm) {
+    return realm ? `${name}-${String(realm).replace(/\s+/g, '')}` : name;
+  }
+
   function createPanel(onClose) {
     const list = h('div', { class: 'wnl-list' });
     const panel = h('div', { class: 'wnl-panel' },
@@ -105,7 +115,7 @@
 
   function charView(p) {
     const t = T();
-    const ingame = `${p.name}-${String(p.realm || '').replace(/\s+/g, '')}`;
+    const ingame = inGameName(p.name, p.realm);
     const spec = p.spec ? `${t.t('SPEC', p.spec)}${p.role ? ' (' + t.t('ROLE', p.role) + ')' : ''}` : null;
     const sub = [
       spec,
@@ -166,5 +176,5 @@
     row.append(main);
   }
 
-  WNL.ui = { CSS, createPanel, createRow, fillRow, copyText };
+  WNL.ui = { CSS, createPanel, createRow, fillRow, copyText, inGameName };
 })(typeof globalThis !== 'undefined' ? globalThis : self);

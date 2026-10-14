@@ -12,6 +12,7 @@
     close,
     get origin() { return host ? origin : null; },
     isInCard: (e) => !!host && e.composedPath().includes(host),
+    toast,
   });
 
   WNL.loadSettings().then((s) => { page.settings = s; listeners.forEach((fn) => fn(s)); });
@@ -29,7 +30,7 @@
   let origin = null; // 'select' | 'hover'
   let lastText = '';
   let requestId = 0;
-  let anchor = { x: 0, below: 0, above: 0 };
+  let anchor = { right: 0, left: 0, top: 0 };
 
   document.addEventListener('mousedown', (e) => { if (host && !page.isInCard(e)) close(); }, true);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); }, true);
@@ -50,8 +51,29 @@
     if (host && origin === 'select' && text === lastText) return;
     const candidates = WNL.parse(text);
     if (!candidates.length) return;
-    show(candidates, { x: x + 14, below: y + 18, above: y - 12 }, 'select');
+    show(candidates, { right: x + 16, left: x - 16, top: y - 14 }, 'select');
     lastText = text;
+  }
+
+  // короткое уведомление у курсора («Скопировано: /inv …»)
+  let toastHost = null;
+  let toastTimer = 0;
+  function toast(text, x, y) {
+    if (!toastHost) {
+      toastHost = document.createElement('div');
+      toastHost.setAttribute('data-wnl', '');
+      toastHost.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;';
+      const sh = toastHost.attachShadow({ mode: 'open' });
+      const style = document.createElement('style');
+      style.textContent = WNL.ui.CSS;
+      sh.append(style, Object.assign(document.createElement('div'), { className: 'wnl-toast' }));
+    }
+    toastHost.shadowRoot.querySelector('.wnl-toast').textContent = text;
+    (document.body || document.documentElement).append(toastHost);
+    toastHost.style.left = `${Math.min(x + 12, innerWidth - 260)}px`;
+    toastHost.style.top = `${Math.max(4, y - 34)}px`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastHost.remove(), 1300);
   }
 
   function ensureHost() {
@@ -79,15 +101,16 @@
     const pad = 8;
     const w = host.offsetWidth;
     const hgt = host.offsetHeight;
-    let left = anchor.x;
-    let top = anchor.below;
-    if (left + w > innerWidth - pad) left = Math.max(pad, innerWidth - w - pad);
-    if (top + hgt > innerHeight - pad) top = Math.max(pad, anchor.above - hgt);
+    // справа от ника/курсора; если не влезает — слева
+    let left = anchor.right;
+    if (left + w > innerWidth - pad) left = anchor.left - w;
+    left = Math.max(pad, Math.min(left, innerWidth - w - pad));
+    const top = Math.max(pad, Math.min(anchor.top, innerHeight - hgt - pad));
     host.style.left = `${left}px`;
     host.style.top = `${top}px`;
   }
 
-  // anchorSpec: { x, below, above } — левый край и куда ставить карточку (под точкой или над ней)
+  // anchorSpec: { right, left, top } — карточка ставится правее `right` (или левее `left`), верх на `top`
   // onResult(cand, res) — необязательный колбэк с результатом поиска
   async function show(candidates, anchorSpec, from, onResult) {
     close();
