@@ -186,7 +186,8 @@
 
     const items = [];
     WNL.parse(text)
-      .filter((c) => c.confidence === 'high' && c.realm)
+      // неуверенные («вчера omali kazzak звал») подсвечиваем, только если Raider.IO их нашёл
+      .filter((c) => c.realm && (c.confidence === 'high' || page.settings.colorize))
       .forEach((c) => {
         let s = c.start;
         let e = c.end;
@@ -210,9 +211,12 @@
     return String(cls || '').toLowerCase().replace(/[^a-z]+/g, '-');
   }
 
+  const isFound = (cand) => { const r = results.get(cand.key); return !!r && r.status === 'found'; };
+
   function mark(range, cand) {
     unmark(range);
     const res = results.get(cand.key);
+    if (cand.confidence !== 'high' && !(res && res.status === 'found')) return;
     if (res && res.status === 'found' && res.profiles.length === 1) {
       const cls = classKey(res.profiles[0].class);
       if (!classHl.has(cls)) {
@@ -296,6 +300,7 @@
     const e = c && entries.get(c);
     if (!e) return null;
     for (const it of e.items) {
+      if (it.cand.confidence !== 'high' && !isFound(it.cand)) continue;
       if (!it.range.isPointInRange(pos.node, pos.offset)) continue;
       const hit = [...it.range.getClientRects()].some((r) => x >= r.left - 1 && x <= r.right + 1 && y >= r.top - 1 && y <= r.bottom + 1);
       if (hit) return it;

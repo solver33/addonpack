@@ -21,6 +21,9 @@ check('Ищем в рейд: Kragar-Silvermoon, Ловкач-Гордунни, J
 check('ники Kragar, Thrall и Jaina — все с silvermoon', ['Kragar-silvermoon:high', 'Thrall-silvermoon:high', 'Jaina-silvermoon:high']);
 check('Kragar silvermoon', ['Kragar-silvermoon:high']);
 check('Kragar из Ревущий фьорд', ['Kragar-howling-fjord:high']);
+check('omali kazzak\nscapasoa kazzak', ['Omali-kazzak:high', 'Scapasoa-kazzak:high']);
+check('- omali kazzak', ['Omali-kazzak:high']);
+check('вчера omali kazzak звал в ключ', ['Omali-kazzak:medium']);
 check('Kragar (Silvermoon)', ['Kragar-silvermoon:high']);
 check('Thrall Draenor', ['Thrall-draenor:high']);
 check('ник: kragar, сервер: Twisting Nether', ['Kragar-twisting-nether:high']);

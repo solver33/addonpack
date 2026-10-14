@@ -318,8 +318,14 @@
       if (asRealm) asRealm.paired = true; // больше не сервер
       t.used = true;
       r.paired = true;
+      // «omali kazzak» отдельной строкой — это точно ник, даже с маленькой буквы
+      const lineStart = text.lastIndexOf('\n', t.start - 1) + 1;
+      const nl = text.indexOf('\n', r.end);
+      const lineEnd = nl === -1 ? text.length : nl;
+      const PUNCT = /^[\s\-–—•*>:,.;!?()\[\]«»"']*$/u;
+      const ownLine = PUNCT.test(text.slice(lineStart, t.start)) && PUNCT.test(text.slice(r.end, lineEnd));
       push(Object.assign(
-        { name: capitalize(t.text), start: t.start, end: r.end, confidence: isUpper(t.text[0]) ? 'high' : 'medium' },
+        { name: capitalize(t.text), start: t.start, end: r.end, confidence: isUpper(t.text[0]) || ownLine ? 'high' : 'medium' },
         r.info,
       ));
     });
